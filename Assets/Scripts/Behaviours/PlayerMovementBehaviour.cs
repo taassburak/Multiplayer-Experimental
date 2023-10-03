@@ -22,6 +22,7 @@ public struct MyCustomData : INetworkSerializable
 
 public class PlayerMovementBehaviour : NetworkBehaviour
 {
+    [SerializeField] private CharacterController _characterController;
     [SerializeField] private NetworkObject _object;
     public Renderer _renderer;
     private List<NetworkClient> _clients;
@@ -39,6 +40,12 @@ public class PlayerMovementBehaviour : NetworkBehaviour
 
         );
 
+    private PlayerController _playerController;
+
+    internal void Initialize(PlayerController playerController)
+    {
+        _playerController = playerController;
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -103,7 +110,18 @@ public class PlayerMovementBehaviour : NetworkBehaviour
         if (Input.GetKey(KeyCode.A)) moveDir.x = -1f;
         if (Input.GetKey(KeyCode.D)) moveDir.x = +1f;
 
-        transform.position += moveDir * _speed.Value * Time.deltaTime;
+        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        _characterController.Move(move * Time.deltaTime * _speed.Value);
+
+        if (move != Vector3.zero)
+        {
+            //_playerController.PlayerAnimationBehaviour.SetAnimation(true);
+            gameObject.transform.forward = Vector3.Lerp(transform.eulerAngles, move, 1);
+        }
+        //else
+            //_playerController.PlayerAnimationBehaviour.SetAnimation(false);
+
+        //transform.position += moveDir * _speed.Value * Time.deltaTime;
     }
 
     [ServerRpc]
@@ -155,6 +173,8 @@ public class PlayerMovementBehaviour : NetworkBehaviour
 
             }
         }
+
+
     }
 
     [ServerRpc]
@@ -189,5 +209,5 @@ public class PlayerMovementBehaviour : NetworkBehaviour
         //}
     }
 
-
+    
 }
