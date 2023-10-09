@@ -25,6 +25,7 @@ public class PlayerItemDetectorBehaviour : NetworkBehaviour
 
     [SerializeField] private PlayerController _playerController;
 
+
     private NetworkVariable<int> _currentDetectedItemAreaId = new NetworkVariable<int>(0,
         NetworkVariableReadPermission.Everyone, 
         NetworkVariableWritePermission.Owner);
@@ -43,7 +44,7 @@ public class PlayerItemDetectorBehaviour : NetworkBehaviour
 
     public static event Action<PlayerController> OnHoldItem;
     public static event Action OnReleaseItem;
-
+    [SerializeField] private GameObject _publicEnvPanel;
 
     public override void OnNetworkSpawn()
     {
@@ -64,6 +65,38 @@ public class PlayerItemDetectorBehaviour : NetworkBehaviour
             //_currentDetectedItemArea = item;
             Debug.Log($"{OwnerClientId} CURRENT DETECTED ITEM AREA ID IS : {_currentDetectedItemAreaId.Value}");
         }
+
+        
+
+        if (other.gameObject.GetComponent<IInteract>() != null)
+        {
+            IInteract interact;
+
+            interact = other.gameObject.GetComponent<IInteract>();
+
+            interact.Interact();
+
+            //_publicEnvPanel = other.gameObject.GetComponent<PublicEnvanterArea>().EnvanterPanel;
+            //_publicEnvPanel.SetActive(true);
+        }
+    }
+    
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        if (other.gameObject.CompareTag("publicEnv"))
+        {
+            IInteract interact;
+
+            interact = other.gameObject.GetComponent<IInteract>();
+
+            interact.ExitInteraction();
+        }
     }
 
     private void Update()
@@ -82,7 +115,7 @@ public class PlayerItemDetectorBehaviour : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            DropItemServerRpc(new ServerRpcParams());
+            DropItemServerRpc(new ServerRpcParams()); 
         }
     }
 

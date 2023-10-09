@@ -101,7 +101,7 @@ public class PlayerMovementBehaviour : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.O))
         {
             SetCharactersColorServerRpc();
-            SetCharactersColorClientRpc();
+            //SetCharactersColorClientRpc();
         }
 
         Vector3 moveDir = new Vector3(0, 0, 0);
@@ -180,32 +180,7 @@ public class PlayerMovementBehaviour : NetworkBehaviour
     [ServerRpc]
     private void SetCharactersColorServerRpc()
     {
-        //var players = NetworkManager.Singleton.ConnectedClientsList;
-
-        //for (int i = 0; i < players.Count; i++)
-        //{
-        //    _clients.Add(players[i]);
-        //}
-
-        //foreach (var player in players)
-        //{
-        //    if (player.ClientId == OwnerClientId)
-        //    {
-        //        //player.PlayerObject.transform.GetComponentInChildren<Material>().color = Color.blue;
-        //        var gameobject = player.PlayerObject.transform.GetComponent<PlayerMovementBehaviour>();
-        //        var mat = gameobject._renderer.material;
-        //        mat.color = Color.blue;
-        //        Debug.Log(mat);
-
-
-        //    }
-        //    else
-        //    {
-        //        var gameobject = player.PlayerObject.transform.GetComponent<PlayerMovementBehaviour>();
-        //        var mat = gameobject._renderer.material;
-        //        mat.color = Color.red;
-
-        //    }
+        Debug.Log($"owner : {OwnerClientId}");
         //}
     }
 
